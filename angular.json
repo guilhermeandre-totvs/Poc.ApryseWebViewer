@@ -22,14 +22,13 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets",
-              "src/wv-resources/lib"
+              "src/assets"
             ],
             "styles": [
               "src/styles.css"
             ],
             "scripts": [
-              "src/wv-resources/lib/webviewer.min.js"
+            
             ]
           },
           "configurations": {
