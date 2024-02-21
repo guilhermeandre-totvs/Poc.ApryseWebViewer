@@ -35,6 +35,24 @@ export class AppComponent implements AfterViewInit {
         licenseKey:
           "demo:1708437239140:7f5b844a030000000012a8cd1213f051d99456c64dd2f23c9c80561d12", // sign up to get a free trial key at https://dev.apryse.com
       },
-      this.viewer.nativeElement)
+      this.viewer.nativeElement) .then(instance => {
+        // Sets the current toolbar group
+        instance.UI.disableElements(['toolbarGroup-Shapes']);
+        instance.UI.disableElements(['toolbarGroup-Edit']);
+        instance.UI.disableElements(['toolbarGroup-Insert']);
+        instance.UI.disableElements(['toolbarGroup-Annotate']);
+        instance.UI.disableElements(['toolbarGroup-FillAndSign']);
+        instance.UI.disableElements(['toolbarGroup-Forms']);
+        instance.UI.disableElements(['toolbarGroup-View']);
+
+        instance.UI.disableElements(['panToolButton']);
+        instance.UI.disableElements(['toggleNotesButton']);
+        instance.UI.disableElements(['searchButton']);
+        instance.UI.disableElements(['menuButton']);
+        instance.UI.disableElements(['viewControlsButton']);
+        instance.UI.disableElements(['selectToolButton']);
+        
+
+      })
   }
 }
