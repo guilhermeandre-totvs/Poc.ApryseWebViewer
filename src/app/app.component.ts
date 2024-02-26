@@ -37,11 +37,10 @@ export class AppComponent implements AfterViewInit {
     WebViewer(
       {
         path: "../lib",
-        licenseKey:
-          "1708437239140:7f5b844a030000000012a8cd1213f051d99456c64dd2f23c9c80561d12", // sign up to get a free trial key at https://dev.apryse.com
-      },this.viewer.nativeElement) .then(instance => {
+        licenseKey:"1708437239140:7f5b844a030000000012a8cd1213f051d99456c64dd2f23c9c80561d12", // sign up to get a free trial key at https://dev.apryse.com
+      },this.viewer.nativeElement).then(instance => {
         const { documentViewer } = instance.Core;    
-        
+
         instance.UI.disableElements(['toolbarGroup-Shapes']);
         instance.UI.disableElements(['toolbarGroup-Edit']);
         instance.UI.disableElements(['toolbarGroup-Insert']);
@@ -56,7 +55,6 @@ export class AppComponent implements AfterViewInit {
         instance.UI.disableElements(['viewControlsButton']);
         instance.UI.disableElements(['selectToolButton']);
 
-        
         this.upload.nativeElement.onclick = (e: any) => {
           this.apryseService.downloadDocument().subscribe({
             next: (v: any) => {
@@ -73,14 +71,14 @@ export class AppComponent implements AfterViewInit {
             }
           })
         }
-    
+
         documentViewer.addEventListener('documentLoaded', () => {
           const actualPage = documentViewer.getPageCount()
           this.valid = actualPage === 1 ? false : true
           this.changeDetectorRef.detectChanges();
           
         })
-    
+
         documentViewer.addEventListener('pageNumberUpdated', pageNumber => {
           const actualPage = documentViewer.getPageCount();
           this.valid = actualPage === pageNumber ? false : true
