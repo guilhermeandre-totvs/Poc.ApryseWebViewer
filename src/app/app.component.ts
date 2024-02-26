@@ -25,22 +25,9 @@ export class AppComponent implements AfterViewInit {
         path: "../lib",
         licenseKey:"1708437239140:7f5b844a030000000012a8cd1213f051d99456c64dd2f23c9c80561d12", // sign up to get a free trial key at https://dev.apryse.com
       },this.viewer.nativeElement).then(instance => {
-        const { documentViewer } = instance.Core;    
+        const { documentViewer } = instance.Core;
+        const { GoTo } = instance.Core.Actions;
 
-        instance.UI.disableElements(['toolbarGroup-Shapes']);
-        instance.UI.disableElements(['toolbarGroup-Edit']);
-        instance.UI.disableElements(['toolbarGroup-Insert']);
-        instance.UI.disableElements(['toolbarGroup-Annotate']);
-        instance.UI.disableElements(['toolbarGroup-FillAndSign']);
-        instance.UI.disableElements(['toolbarGroup-Forms']);
-        instance.UI.disableElements(['toolbarGroup-View']);
-
-        instance.UI.disableElements(['panToolButton']);
-        instance.UI.disableElements(['toggleNotesButton']);
-        instance.UI.disableElements(['searchButton']);
-        instance.UI.disableElements(['menuButton']);
-        instance.UI.disableElements(['viewControlsButton']);
-        instance.UI.disableElements(['selectToolButton']);
 
         this.upload.nativeElement.onclick = (e: any) => {
           this.apryseService.downloadDocument().subscribe({
@@ -71,6 +58,49 @@ export class AppComponent implements AfterViewInit {
           this.valid = actualPage === pageNumber ? false : true
           this.changeDetectorRef.detectChanges();     
         });
+
+      
+        // const nextPageButton = {
+        //   type: 'statefulButton',
+        //   initialState: 'Page',
+        //   states: {
+        //     Page: {
+        //       // Checkout https://www.pdftron.com/api/web/WebViewerInstance.html to see more APIs related with viewerInstance
+        //       onClick: () => {
+        //         new GoTo(1)
+        //       }
+        //     }
+        //   },
+        //   mount: (update: (...params: any[]) => any) => {
+        //     // Checkout https://www.pdftron.com/api/web/Core.DocumentViewer.html to see more APIs and events with docViewer
+        //     // We want to update this button when page number changes so it can have the correct content;
+        //     instance.Core.documentViewer.addEventListener('pageNumberUpdated.nextPageButton', update);
+        //   },
+  
+        //   dataElement: 'nextPageButton'
+        // };
+
+        
+        instance.UI.setHeaderItems(function(header) {
+          header.update([
+            {
+              type: 'statefulButton',
+              initialState: 'Page',
+              states: {
+                Page: {
+                  // Checkout https://www.pdftron.com/api/web/WebViewerInstance.html to see more APIs related with viewerInstance
+                  onClick: () => {
+                    const currentPage = documentViewer.getCurrentPage();
+                    const totalPages = documentViewer.getPageCount();
+                    const atLastPage = currentPage === totalPages;
+            
+                    documentViewer.setCurrentPage(3, true )
+                  }
+                }
+              },
+            }
+          ])
+        })
       })
   }
 }
