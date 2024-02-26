@@ -1,9 +1,14 @@
 <div class="page">
-    <div class="header">
-      <span>Angular sample</span>
-      <button type="button">
-        UploadFile
-      </button>
-    </div>
-    <div #viewer class="viewer"></div>
+  <div class="container-button">
+    <button #upload>
+      <span> Open File By Download </span>
+    </button>
+
+    <button [disabled]="valid">
+      <span> Unlock button by page </span>
+    </button>
   </div>
+
+  <div class="header">Angular sample</div>
+  <div #viewer class="viewer"></div>
+</div>
