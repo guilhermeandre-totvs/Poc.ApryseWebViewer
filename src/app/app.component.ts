@@ -1,6 +1,5 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild, ChangeDetectorRef } from '@angular/core';
-import WebViewer, {WebViewerInstance} from "@pdftron/webviewer";
-import {Subject} from "rxjs";
+import {AfterViewInit, Component, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
+import WebViewer from "@pdftron/webviewer";
 import { ApryseService } from './agreement.service';
 
 @Component({
@@ -9,29 +8,16 @@ import { ApryseService } from './agreement.service';
   templateUrl: "app.component.html",
 })
 export class AppComponent implements AfterViewInit {
-  wvInstance?: WebViewerInstance;
-
-  page: number = 1
-  currentPage: number | undefined
-  valid: boolean = true
-  check: number = 1;
-  totalPages: number = 1;
-
-  teste: number = 1
 
   @ViewChild("viewer") viewer!: ElementRef;
   @ViewChild("upload") upload!: ElementRef;
 
-  @Output() coreControlsEvent: EventEmitter<string> = new EventEmitter();
-
-  private documentLoaded$: Subject<void>;
+  valid: boolean = true
 
   constructor(
     public apryseService: ApryseService,
     private changeDetectorRef: ChangeDetectorRef
-  ) {
-    this.documentLoaded$ = new Subject<void>();
-  }
+  ) {  }
 
   ngAfterViewInit(): void {
     WebViewer(
@@ -47,6 +33,7 @@ export class AppComponent implements AfterViewInit {
         instance.UI.disableElements(['toolbarGroup-Annotate']);
         instance.UI.disableElements(['toolbarGroup-FillAndSign']);
         instance.UI.disableElements(['toolbarGroup-Forms']);
+        instance.UI.disableElements(['toolbarGroup-View']);
 
         instance.UI.disableElements(['panToolButton']);
         instance.UI.disableElements(['toggleNotesButton']);
