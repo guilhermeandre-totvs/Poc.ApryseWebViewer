@@ -1,166 +1,102 @@
-import {AfterViewInit, Component, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
-import WebViewer, {Core, UI, WebViewerInstance, } from "@pdftron/webviewer";
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  ViewChild,
+  ChangeDetectorRef,
+} from '@angular/core';
+import WebViewer from '@pdftron/webviewer';
 import { ApryseService } from './agreement.service';
 
 @Component({
-  selector: "app-root",
-  styleUrls: ["app.component.css"],
-  templateUrl: "app.component.html",
+  selector: 'app-root',
+  styleUrls: ['app.component.css'],
+  templateUrl: 'app.component.html',
 })
 export class AppComponent implements AfterViewInit {
-  wvInstance?: WebViewerInstance;
+  @ViewChild('viewer') viewer!: ElementRef;
+  @ViewChild('upload') upload!: ElementRef;
+  @ViewChild('teste') teste!: ElementRef;
+  @ViewChild('thumb') thumb!: ElementRef;
 
+  @ViewChild('previousPage') previousPage!: ElementRef;
+  @ViewChild('nextPage') nextPage!: ElementRef;
 
-  @ViewChild("viewer") viewer!: ElementRef;
-  @ViewChild("upload") upload!: ElementRef;
-  @ViewChild("teste") teste!: ElementRef;
-
-  valid: boolean = true
+  valid: boolean = true;
+  page: number = 1;
+  numberPage: number = 1;
 
   constructor(
     public apryseService: ApryseService,
     private changeDetectorRef: ChangeDetectorRef
-  ) {  }
+  ) {}
 
   ngAfterViewInit(): void {
     WebViewer(
       {
-        path: "../lib",
-        licenseKey:"1708437239140:7f5b844a030000000012a8cd1213f051d99456c64dd2f23c9c80561d12",
-      },this.viewer.nativeElement).then(instance => {
-        const { documentViewer } = instance.Core;
+        path: '../lib',
+        licenseKey:
+          '1708437239140:7f5b844a030000000012a8cd1213f051d99456c64dd2f23c9c80561d12',
+      },
+      this.viewer.nativeElement
+    ).then((instance) => {
+      const { documentViewer } = instance.Core;
 
-        instance.UI.disableElements(['header']);
-        
-        this.upload.nativeElement.onclick = (e: any) => {
-          this.apryseService.downloadDocument().subscribe({
-            next: (v: any) => {
-              var byteString = atob(v.fileBytes);
-              var arrayByffer = new ArrayBuffer(byteString.length);
-              var uintArray = new Uint8Array(arrayByffer);
-          
-              for (var i = 0; i < byteString.length; i++) {
-                uintArray[i] = byteString.charCodeAt(i);
-              }
-    
-              const file = new File([arrayByffer], 'teste', { type: 'application/pdf' });
-              instance.UI.loadDocument(file)
+      instance.UI.disableElements(['header']); //
+      instance.UI.disableElements([
+        'outlinesPanelButton',
+        'thumbnailsControlRotateCounterClockwise',
+        'thumbnailsControlRotateClockwise',
+        'thumbCloseMultiSelect',
+        'thumbnailsControlManipulatePopupSmallTrigger',
+        'thumbMultiSelect',
+        'pageNavOverlay',
+      ]);
+
+      this.upload.nativeElement.onclick = (e: any) => {
+        this.apryseService.downloadDocument().subscribe({
+          next: (v: any) => {
+            var byteString = atob(v.fileBytes);
+            var arrayByffer = new ArrayBuffer(byteString.length);
+            var uintArray = new Uint8Array(arrayByffer);
+
+            for (var i = 0; i < byteString.length; i++) {
+              uintArray[i] = byteString.charCodeAt(i);
             }
-          })
-        }
 
-        this.teste.nativeElement.onclick = (e: any) => {
-          const currentPage = documentViewer.getCurrentPage();
-          const totalPages = documentViewer.getPageCount();
-          const atLastPage = currentPage === totalPages;
-  
-          documentViewer.setCurrentPage(3, true )
-        }
-
-        documentViewer.addEventListener('documentLoaded', () => {
-          const actualPage = documentViewer.getPageCount()
-          this.valid = actualPage === 1 ? false : true
-          this.changeDetectorRef.detectChanges();
-          
-        })
-
-        documentViewer.addEventListener('pageNumberUpdated', pageNumber => {
-          const actualPage = documentViewer.getPageCount();
-          this.valid = actualPage === pageNumber ? false : true
-          this.changeDetectorRef.detectChanges();     
+            const file = new File([arrayByffer], 'teste', {
+              type: 'application/pdf',
+            });
+            instance.UI.loadDocument(file);
+          },
         });
+      };
 
-      
-        // const nextPageButton = {
-        //   type: 'statefulButton',
-        //   initialState: 'Page',
-        //   states: {
-        //     Page: {
-        //       // Checkout https://www.pdftron.com/api/web/WebViewerInstance.html to see more APIs related with viewerInstance
-        //       onClick: () => {
-        //         new GoTo(1)
-        //       }
-        //     }
-        //   },
-        //   mount: (update: (...params: any[]) => any) => {
-        //     // Checkout https://www.pdftron.com/api/web/Core.DocumentViewer.html to see more APIs and events with docViewer
-        //     // We want to update this button when page number changes so it can have the correct content;
-        //     instance.Core.documentViewer.addEventListener('pageNumberUpdated.nextPageButton', update);
-        //   },
-  
-        //   dataElement: 'nextPageButton'
-        // };
+      this.thumb.nativeElement.onclick = (e: any) => {
+        // instance.UI.closeElements(['leftPanel']);
+        instance.UI.openElements(['leftPanel']);
+      };
 
-        
-        // instance.UI.setHeaderItems(function(header) {
-        //   header.update([
-        //     {
-        //       type: 'statefulButton',
-        //       initialState: 'Page',
-        //       states: {
-        //         Page: {
-        //           // Checkout https://www.pdftron.com/api/web/WebViewerInstance.html to see more APIs related with viewerInstance
-        //           onClick: () => {
-        //             const currentPage = documentViewer.getCurrentPage();
-        //             const totalPages = documentViewer.getPageCount();
-        //             const atLastPage = currentPage === totalPages;
-            
-        //             documentViewer.setCurrentPage(3, true )
-        //           }
-        //         }
-        //       },
-        //       dataElement: 'teste',
-        //     },
-        //     {
-        //       type: 'statefulButton',
-        //       initialState: 'Page',
-        //       states: {
-        //         Page: {
-        //           // Checkout https://www.pdftron.com/api/web/WebViewerInstance.html to see more APIs related with viewerInstance
-        //           onClick: () => {
-        //             const currentPage = documentViewer.getCurrentPage();
-        //             const totalPages = documentViewer.getPageCount();
-        //             const atLastPage = currentPage === totalPages;
-            
-        //             documentViewer.setCurrentPage(3, true )
-        //           }
-        //         }
-        //       },
-        //     },
-        //     {
-        //       type: 'statefulButton',
-        //       initialState: 'Page',
-        //       states: {
-        //         Page: {
-        //           // Checkout https://www.pdftron.com/api/web/WebViewerInstance.html to see more APIs related with viewerInstance
-        //           onClick: () => {
-        //             const currentPage = documentViewer.getCurrentPage();
-        //             const totalPages = documentViewer.getPageCount();
-        //             const atLastPage = currentPage === totalPages;
-            
-        //             documentViewer.setCurrentPage(3, true )
-        //           }
-        //         }
-        //       },
-        //     },
-        //     {
-        //       type: 'statefulButton',
-        //       initialState: 'Page',
-        //       states: {
-        //         Page: {
-        //           // Checkout https://www.pdftron.com/api/web/WebViewerInstance.html to see more APIs related with viewerInstance
-        //           onClick: () => {
-        //             const currentPage = documentViewer.getCurrentPage();
-        //             const totalPages = documentViewer.getPageCount();
-        //             const atLastPage = currentPage === totalPages;
-            
-        //             documentViewer.setCurrentPage(3, true )
-        //           }
-        //         }
-        //       },
-        //     }
-        //   ])
-        // })
-      })
+      documentViewer.addEventListener('documentLoaded', () => {
+        const actualPage = documentViewer.getPageCount();
+        this.valid = actualPage === 1 ? false : true;
+        this.changeDetectorRef.detectChanges();
+      });
+
+      documentViewer.addEventListener('pageNumberUpdated', (pageNumber) => {
+        const actualPage = documentViewer.getPageCount();
+        this.numberPage = pageNumber;
+        this.valid = actualPage === pageNumber ? false : true;
+        this.changeDetectorRef.detectChanges();
+      });
+
+      this.previousPage.nativeElement.onclick = () => {
+        documentViewer.setCurrentPage(this.numberPage - 1, true);
+      };
+
+      this.nextPage.nativeElement.onclick = () => {
+        documentViewer.setCurrentPage(this.numberPage + 1, true);
+      };
+    });
   }
 }
