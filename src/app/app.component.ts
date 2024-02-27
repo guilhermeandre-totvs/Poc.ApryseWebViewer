@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
-import WebViewer from "@pdftron/webviewer";
+import WebViewer, {Core, UI, WebViewerInstance, } from "@pdftron/webviewer";
 import { ApryseService } from './agreement.service';
 
 @Component({
@@ -8,9 +8,12 @@ import { ApryseService } from './agreement.service';
   templateUrl: "app.component.html",
 })
 export class AppComponent implements AfterViewInit {
+  wvInstance?: WebViewerInstance;
+
 
   @ViewChild("viewer") viewer!: ElementRef;
   @ViewChild("upload") upload!: ElementRef;
+  @ViewChild("teste") teste!: ElementRef;
 
   valid: boolean = true
 
@@ -23,12 +26,12 @@ export class AppComponent implements AfterViewInit {
     WebViewer(
       {
         path: "../lib",
-        licenseKey:"1708437239140:7f5b844a030000000012a8cd1213f051d99456c64dd2f23c9c80561d12", // sign up to get a free trial key at https://dev.apryse.com
+        licenseKey:"1708437239140:7f5b844a030000000012a8cd1213f051d99456c64dd2f23c9c80561d12",
       },this.viewer.nativeElement).then(instance => {
         const { documentViewer } = instance.Core;
-        const { GoTo } = instance.Core.Actions;
 
-
+        instance.UI.disableElements(['header']);
+        
         this.upload.nativeElement.onclick = (e: any) => {
           this.apryseService.downloadDocument().subscribe({
             next: (v: any) => {
@@ -44,6 +47,14 @@ export class AppComponent implements AfterViewInit {
               instance.UI.loadDocument(file)
             }
           })
+        }
+
+        this.teste.nativeElement.onclick = (e: any) => {
+          const currentPage = documentViewer.getCurrentPage();
+          const totalPages = documentViewer.getPageCount();
+          const atLastPage = currentPage === totalPages;
+  
+          documentViewer.setCurrentPage(3, true )
         }
 
         documentViewer.addEventListener('documentLoaded', () => {
@@ -81,26 +92,75 @@ export class AppComponent implements AfterViewInit {
         // };
 
         
-        instance.UI.setHeaderItems(function(header) {
-          header.update([
-            {
-              type: 'statefulButton',
-              initialState: 'Page',
-              states: {
-                Page: {
-                  // Checkout https://www.pdftron.com/api/web/WebViewerInstance.html to see more APIs related with viewerInstance
-                  onClick: () => {
-                    const currentPage = documentViewer.getCurrentPage();
-                    const totalPages = documentViewer.getPageCount();
-                    const atLastPage = currentPage === totalPages;
+        // instance.UI.setHeaderItems(function(header) {
+        //   header.update([
+        //     {
+        //       type: 'statefulButton',
+        //       initialState: 'Page',
+        //       states: {
+        //         Page: {
+        //           // Checkout https://www.pdftron.com/api/web/WebViewerInstance.html to see more APIs related with viewerInstance
+        //           onClick: () => {
+        //             const currentPage = documentViewer.getCurrentPage();
+        //             const totalPages = documentViewer.getPageCount();
+        //             const atLastPage = currentPage === totalPages;
             
-                    documentViewer.setCurrentPage(3, true )
-                  }
-                }
-              },
-            }
-          ])
-        })
+        //             documentViewer.setCurrentPage(3, true )
+        //           }
+        //         }
+        //       },
+        //       dataElement: 'teste',
+        //     },
+        //     {
+        //       type: 'statefulButton',
+        //       initialState: 'Page',
+        //       states: {
+        //         Page: {
+        //           // Checkout https://www.pdftron.com/api/web/WebViewerInstance.html to see more APIs related with viewerInstance
+        //           onClick: () => {
+        //             const currentPage = documentViewer.getCurrentPage();
+        //             const totalPages = documentViewer.getPageCount();
+        //             const atLastPage = currentPage === totalPages;
+            
+        //             documentViewer.setCurrentPage(3, true )
+        //           }
+        //         }
+        //       },
+        //     },
+        //     {
+        //       type: 'statefulButton',
+        //       initialState: 'Page',
+        //       states: {
+        //         Page: {
+        //           // Checkout https://www.pdftron.com/api/web/WebViewerInstance.html to see more APIs related with viewerInstance
+        //           onClick: () => {
+        //             const currentPage = documentViewer.getCurrentPage();
+        //             const totalPages = documentViewer.getPageCount();
+        //             const atLastPage = currentPage === totalPages;
+            
+        //             documentViewer.setCurrentPage(3, true )
+        //           }
+        //         }
+        //       },
+        //     },
+        //     {
+        //       type: 'statefulButton',
+        //       initialState: 'Page',
+        //       states: {
+        //         Page: {
+        //           // Checkout https://www.pdftron.com/api/web/WebViewerInstance.html to see more APIs related with viewerInstance
+        //           onClick: () => {
+        //             const currentPage = documentViewer.getCurrentPage();
+        //             const totalPages = documentViewer.getPageCount();
+        //             const atLastPage = currentPage === totalPages;
+            
+        //             documentViewer.setCurrentPage(3, true )
+        //           }
+        //         }
+        //       },
+        //     }
+        //   ])
+        // })
       })
   }
 }

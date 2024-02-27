@@ -4,3 +4,14 @@ html, body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
 }
+.Button.ActionButton {
+    background-color: aquamarine;
+    }
+
+.MainHeader {
+background-color: aquamarine;
+}
+
+.Header.Items {
+    background-color: aquamarine;
+    }
